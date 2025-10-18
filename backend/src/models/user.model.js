@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type:String,
+    },
+    imgUrl:{
+        type:String,
+        default:"https://i.pinimg.com/736x/33/55/9a/33559a518b7eda89429411a7dc59a6b0.jpg"
     }
 },
 {
