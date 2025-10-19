@@ -9,7 +9,7 @@ const bookmarkSchema = new mongoose.Schema({
   msg: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "msg",
-    required: true
+    required: true 
   },
   folder: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +18,7 @@ const bookmarkSchema = new mongoose.Schema({
   },
   file: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "chatfile",
+    ref: "chatfile", 
     required: true
   }
 }, {

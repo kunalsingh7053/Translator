@@ -3,6 +3,8 @@ const app = express();
 const cookieparser = require("cookie-parser")
 const cors = require("cors")
 const authRoutes = require("./routes/auth.routes")
+const translatorRoutes = require("./routes/chat.routes")
+const bookmarkRoutes = require("./routes/bookmark.routes")
 //using middlewares
 
 app.use(express.json())
@@ -15,6 +17,8 @@ app.use(cors({
 
 //using routes
 app.use("/api/auth",authRoutes)
+app.use("/api/translator",translatorRoutes)
+app.use("/api",bookmarkRoutes)
 
 
 module.exports = app;

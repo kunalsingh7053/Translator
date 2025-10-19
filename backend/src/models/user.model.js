@@ -22,8 +22,21 @@ const userSchema = new mongoose.Schema({
     },
     imgUrl:{
         type:String,
-        default:"https://i.pinimg.com/736x/33/55/9a/33559a518b7eda89429411a7dc59a6b0.jpg"
+        default:"https://ik.imagekit.io/ofm1vl6gr/translator/profilePics/673edd189b210fabf300c588345cc87b_nE4QNnH2x.jpg"
+    },
+    imgHash: { 
+        type: String,
+        default: "d4b2e8352a646bc92d78dc785e373903"
+     },
+    imgFileId:{
+        type:String,
+        default:"68f454be5c7cd75eb8eaaa44"
+    },
+      language: {
+        type: String,
+        required: true
     }
+
 },
 {
     timestamps:true
