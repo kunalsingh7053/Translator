@@ -5,4 +5,4 @@ const chatController = require("../controllers/chat.controller")
 router.post("/chat",authMiddleware.authUser,chatController.startNewChat) 
 
 
-module.exports = router;
+module.exports = router; 
