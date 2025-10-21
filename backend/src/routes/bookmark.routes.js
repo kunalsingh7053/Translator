@@ -5,4 +5,5 @@ const bookmarkController = require("../controllers/bookmark.controller")
 router.post('/bookmark',authMiddleware.authUser, bookmarkController.addBookmark);
 router.post('/foldercreate',authMiddleware.authUser, bookmarkController.createFolder); 
 router.post('/filecreate',authMiddleware.authUser, bookmarkController.createFile);
-    module.exports = router;   
+
+    module.exports = router;    

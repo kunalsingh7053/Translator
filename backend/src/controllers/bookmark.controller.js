@@ -14,9 +14,9 @@ async function addBookmark(req, res) {
        }
        const {messageId,folderId,fileId} = req.body; 
 
-       //1.Message Check
+       //1.Message Check 
        const message = await msgModel.findById(messageId);
-       if(!message)
+       if(!message) 
        {
             return res.status(404).json({message:"Message Not Found"})
        }
