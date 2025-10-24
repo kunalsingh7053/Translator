@@ -3,7 +3,7 @@ const app = express();
 const cookieparser = require("cookie-parser")
 const cors = require("cors")
 const authRoutes = require("./routes/auth.routes")
-const translatorRoutes = require("./routes/chat.routes")
+const translatorRoutes = require("./routes/chat.routes"); // ✅ correct
 const bookmarkRoutes = require("./routes/bookmark.routes")
 //using middlewares
 

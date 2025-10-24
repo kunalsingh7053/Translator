@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
-import About from "../pages/about";
+import About from "../pages/About";
 import Bookmark from "../pages/Bookmark";
 import History from "../pages/History";
 import Profile from "../pages/Profile";
@@ -14,12 +14,21 @@ const Mainroutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/about" element={<About />} />
 
         {/* 🔒 Protected Routes */}
+
+        <Route path="/" element={
+          <ProtectedRoute>
+          <Home />
+          </ProtectedRoute>
+          } />
+        <Route path="/about" element={
+                      <ProtectedRoute>
+          <About />
+          </ProtectedRoute>
+          } />
         <Route
           path="/bookmark"
           element={

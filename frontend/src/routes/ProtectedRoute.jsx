@@ -1,18 +1,21 @@
-// src/components/ProtectedRoute.jsx
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.userReducer
-); // from userSlice
+  // read both users and initialized from store
+  const { users, initialized } = useSelector((state) => state.userReducer);
 
-  // Agar user login nahi hai
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  // debug
+  // eslint-disable-next-line no-console
+  console.log('ProtectedRoute state -> initialized:', initialized, 'users:', users);
 
-  // Agar user login hai
+  // still waiting for profile fetch to complete
+  if (!initialized) return null; // or a spinner while we restore session
+
+  // no user -> redirect
+  if (!users) return <Navigate to="/login" replace />;
+
   return children;
 };
 

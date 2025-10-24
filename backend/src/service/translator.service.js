@@ -1,26 +1,32 @@
 const userModel = require("../models/user.model"); // adjust path
+const axios = require("axios");
 
-const axios = require('axios');
+// Full name to code mapping
+const langMap = {
+  English: "en",
+  Hindi: "hi",
+  Spanish: "es",
+  French: "fr",
+  German: "de",
+  // add more if needed
+};
 
-async function translateText(userId, text, targetLang, sourceLang = "en") {
+async function translateText(userId, text, targetLang, sourceLang = "English") {
   try {
-    // 1️⃣ Get user from DB
-    const user = await userModel.findById(userId);
-    if (!user) throw new Error("User not found");
+    if (!text) throw new Error("Text is required");
 
-    // 2️⃣ Use user's language as default if targetLang not provided
-    targetLang = targetLang || user.language;
+    // convert full name to code
+    sourceLang = langMap[sourceLang] || "en";
+    targetLang = langMap[targetLang] || "hi";
 
-    // 3️⃣ Prepare API URL
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+    const url = `https://lingva.ml/api/v1/${sourceLang}/${targetLang}/${encodeURIComponent(text)}`;
 
-    // 4️⃣ Call translation API
     const response = await axios.get(url);
 
-    if (response.data && response.data.responseData) {
-      return response.data.responseData.translatedText;
+    if (response.data && response.data.translation) {
+      return response.data.translation;
     } else {
-      throw new Error("Translation failed");
+      throw new Error("Translation failed (No response from API)");
     }
   } catch (error) {
     console.error("Error translating text:", error.message);

@@ -21,7 +21,7 @@ const Login = () => {
 
     if (result.success) {
       toast.success("Login successful!");
-      navigate("/home"); // redirect to your home/dashboard
+      navigate("/"); // redirect to your home/dashboard
     } else {
       toast.error(`Login failed: ${result.message}`);
     }
@@ -51,10 +51,11 @@ const Login = () => {
               <input
                 {...register("email", {
                   required: "Email is required",
-                  pattern: {
-                    value: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/,
-                    message: "Enter a valid email address",
-                  },
+                 pattern: {
+  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // ✅ single backslash
+  message: "Enter a valid email address",
+},
+
                 })}
                 type="email"
                 className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 focus:ring-2 focus:ring-sky-200 focus:outline-none"

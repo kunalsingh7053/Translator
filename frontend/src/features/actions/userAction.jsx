@@ -1,12 +1,12 @@
 import API from "../../api/axios";
-import { loaduser,removeuser } from "../reducers/userSlice";
+import { loaduser, removeuser, setInitialized } from "../reducers/userSlice";
 
-
+ 
 //Register User
 export const registerUser = (userData)=> async(dispatch,getState)=>{
     console.log("xyz",userData)
     try {
-        const res = await API.post('/auth/register',{
+        const res = await API.post('/auth/register',{ 
             fullName:{
                 firstName:userData.firstName,
                 lastName:userData.lastName
@@ -19,8 +19,10 @@ export const registerUser = (userData)=> async(dispatch,getState)=>{
     {
         withCredentials:true
     });
-    console.log(res.data.user)
-        dispatch(loaduser(res.data.user));
+  console.log(res.data)
+    // normalize user: backend might return user at res.data.user or at res.data
+    const userFromRes = res.data?.user ?? res.data
+    dispatch(loaduser(userFromRes));
         return {success:true};
     } catch (error) {
         console.log("Error in registerUser action:",error);
@@ -39,7 +41,9 @@ try {
     },{
         withCredentials:true
     })
-    dispatch(loaduser(res.data.user));
+  // normalize user
+  const userFromLogin = res.data?.user ?? res.data
+  dispatch(loaduser(userFromLogin));
     return {success:true};
 } catch (error) {
     console.log("Error in loginUser action:",error);
@@ -86,19 +90,30 @@ export const deleteAcccount = ()=> async(dispatch,getState)=>{
 }
 
 //Fetch User Profile
-export const fetchUserProfile = ()=> async(dispatch,getState)=>{
-    try {
-        
-        const res = await API.get('/auth/profile')
-        dispatch(loaduser(res.data.user));  
-        return {success:true};
-    } catch (error) {
-        console.log("Error in fetchUserProfile action:",error);
-        return {success:false,message:error.response?.data?.message || error.message};
+export const fetchUserProfile = () => async (dispatch) => {
+  try {
+    const res = await API.get('/auth/profile', { withCredentials: true });
+    console.log('fetchUserProfile: response status=', res.status, 'data=', res.data);
+    // If backend returns a user (either at res.data.user or at res.data) load it.
+    const fetchedUser = res?.data?.user ?? res?.data
+    if (fetchedUser) {
+      dispatch(loaduser(fetchedUser));
+            dispatch(setInitialized(true));
+            return { success: true };
+    } else {
+      dispatch(removeuser());
+            dispatch(setInitialized(true));
+            return { success: false, message: 'No user in response' };
     }
-
+  } catch (error) {
+    // optional: dispatch(removeuser()) to ensure state is cleared
+    dispatch(removeuser());
+    console.error('fetchUserProfile: error=', error?.response ?? error);
+    dispatch(setInitialized(true));
+    console.log("Error in fetchUserProfile action:", error);
+    return { success: false, message: error.response?.data?.message || error.message };
+  }
 }
-
 
 // Update User Profile
 export const updateUserProfile = (userData, file) => async (dispatch, getState) => {
@@ -111,20 +126,22 @@ export const updateUserProfile = (userData, file) => async (dispatch, getState) 
     if (userData.oldpassword) formData.append("oldpassword", userData.oldpassword);
     if (userData.newpassword) formData.append("newpassword", userData.newpassword);
 
-    // ✅ File (optional)
+    // ✅ File (optional) - backend expects field name 'image'
     if (file) {
-      formData.append("file", file);
+      formData.append("image", file);
     }
 
-    const res = await API.put("/auth/profile", formData, {
+    // backend route: PATCH /api/auth/profile/update
+    const res = await API.patch("/auth/profile/update", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
       withCredentials: true,
     });
 
-    // ✅ Redux update
-    dispatch(loaduser(res.data.user));
+  // ✅ Redux update - normalize response
+  const userFromUpdate = res.data?.user ?? res.data
+  dispatch(loaduser(userFromUpdate));
 
     return { success: true, message: res.data.message };
   } catch (error) {
