@@ -40,7 +40,7 @@ async function translateChat(req, res) {
       });
     } 
    
-await msgModel.create({
+const msg = await msgModel.create({
   user: userId,
   originalText: title.trim(),
   translatedText,
@@ -52,6 +52,13 @@ await msgModel.create({
     res.json({
       success: true,
       translatedText,
+      msg: {
+        _id: msg._id,
+        originalText: msg.originalText,
+        translatedText: msg.translatedText,
+        sourceLang: msg.sourceLang,
+        targetLang: msg.targetLang
+      }
     });
   } catch (error) {
     console.error("💥 Error in translateChat:", error);

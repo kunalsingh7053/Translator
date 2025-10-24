@@ -17,7 +17,7 @@ const bookmarkSchema = new mongoose.Schema({
     required: true
   },
   file: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId, 
     ref: "chatfile", 
     required: true
   }

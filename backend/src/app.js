@@ -8,7 +8,7 @@ const bookmarkRoutes = require("./routes/bookmark.routes")
 //using middlewares
 
 app.use(express.json())
-// Ye middleware req.cookies ko populate karega
+// Ye middleware req.cookies ko populate karega 
 app.use(cookieparser());
 app.use(cors({
     origin: "http://localhost:5173",

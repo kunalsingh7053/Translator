@@ -16,19 +16,28 @@ export const translateText = (inputText, sourceLang, targetLang) => async (dispa
       targetLang,
     });
     console.log("response=>",res)
-const translatedText = res.data.translatedText
+    if (!res.data.success) {
+      throw new Error(res.data.message || "Translation failed");
+    }
 
+    const translatedText = res.data.translatedText;
+    const msg = res.data.msg;
+    console.log("✅ Translation successful:", { translatedText, msg });
 
-    console.log("✅ Translated Text:", translatedText);
-
-    dispatch(addMessage({ input: inputText, output: translatedText }));
-    return { success: true, translatedText };
+    dispatch(addMessage({ 
+      id: msg._id,
+      input: msg.originalText, 
+      output: translatedText,
+      sourceLang: msg.sourceLang,
+      targetLang: msg.targetLang
+    }));
+    return { success: true, translatedText, msg };
   } catch (error) {
     console.error("❌ Translation Error:", error.response?.data || error.message);
     return { success: false, error: error.message };
   }
 };
-
+ 
 // ✅ Clear all chat messages
 export const clearAllMessages = () => (dispatch) => {
   dispatch(clearMsg());
@@ -38,6 +47,6 @@ export const clearAllMessages = () => (dispatch) => {
 // ✅ Remove single message
 export const deleteMessage = (id) => (dispatch) => {
   dispatch(removeMsg(id)); 
-  return { success: true };
+  return { success: true }; 
 };
 

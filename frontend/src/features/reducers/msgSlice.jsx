@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   messages: [] // each message: { id, input, output, createdAt }
-};
+}; 
 
 const msgSlice = createSlice({ 
   name: "messages",
@@ -11,7 +11,7 @@ const msgSlice = createSlice({
   reducers: {
     addMessage: (state, action) => {
       state.messages.push({
-        id: Date.now(),
+        id: action.payload.id,
         input: action.payload.input,
         output: action.payload.output,
         createdAt: new Date().toISOString(),
