@@ -11,7 +11,7 @@ app.use(express.json())
 // Ye middleware req.cookies ko populate karega 
 app.use(cookieparser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://translator-1-sa98.onrender.com",
     credentials: true,
 }))
 

@@ -17,4 +17,4 @@ router.get('/bookmarks/:fileId', authMiddleware.authUser, bookmarkController.get
 //delete endpoints
 router.delete("/folderdelete/:folderId",authMiddleware.authUser,bookmarkController.deleteFolder)
 router.delete("/filedelete/:fileId",authMiddleware.authUser,bookmarkController.deleteFile)
-module.exports = router;
+module.exports = router; 
