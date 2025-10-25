@@ -23,7 +23,8 @@ const Home = () => {
   const dispatch = useDispatch()
   const messages = useSelector(state => state.msg.messages)
   const lastMessage = messages[messages.length - 1]
-  
+  const [showShareModal, setShowShareModal] = useState(false);
+
   // Bookmark states
   const [showBookmarkModal, setShowBookmarkModal] = useState(false)
   const [folders, setFolders] = useState([])
@@ -98,7 +99,7 @@ const Home = () => {
 
   // Handle saving bookmark
   const handleSaveBookmark = async () => {
-    if (!selectedFile?._id || !selectedFolder?._id) {
+    if (!selectedFile?._id || !selectedFolder?._id) { 
       toast.error('Please select a folder and file')
       return
     }
@@ -123,7 +124,22 @@ const Home = () => {
     setSelectedFolder(folder)
     await loadFiles(folderId)
   }
- 
+ //generatesharelinks
+  const getShareLinks = () => {
+  if (!inputText.trim() || !translatedText.trim()) return {};
+  
+  // Combine source and translation
+  const textToShare = `Source (${sourceLang}): ${inputText}\nTranslation (${targetLang}): ${translatedText}`;
+  const encodedText = encodeURIComponent(textToShare);
+
+  return {
+    whatsapp: `https://wa.me/?text=${encodedText}`,
+    telegram: `https://t.me/share/url?url=&text=${encodedText}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodedText}`,
+    email: `mailto:?subject=Shared Translation&body=${encodedText}`
+  };
+};
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -209,6 +225,51 @@ const Home = () => {
                     <BookmarkIcon className="h-4 w-4" />
                     Bookmark
                   </button>
+{translatedText&&(
+
+<button
+  onClick={() => setShowShareModal(true)}
+  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+>
+  Share
+</button>
+)}
+
+{showShareModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Share Translation</h3>
+        <button onClick={() => setShowShareModal(false)} className="text-gray-400 hover:text-gray-500">
+          ✖
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {Object.entries(getShareLinks()).map(([platform, url]) => (
+          <button
+            key={platform}
+            onClick={() => window.open(url, "_blank")}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Share via {platform.charAt(0).toUpperCase() + platform.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={() => setShowShareModal(false)}
+          className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
                 </div>
               </div>
 

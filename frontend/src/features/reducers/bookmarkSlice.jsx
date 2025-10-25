@@ -10,7 +10,7 @@ const initialState = {
 
 const bookmarkSlice = createSlice({
   name: "bookmark",
-  initialState,
+  initialState, 
   reducers: { 
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -30,7 +30,7 @@ const bookmarkSlice = createSlice({
     },
     addFile: (state, action) => {
       state.files.push(action.payload);
-    },
+    }, 
     setBookmarks: (state, action) => {
       state.bookmarks = action.payload;
     },

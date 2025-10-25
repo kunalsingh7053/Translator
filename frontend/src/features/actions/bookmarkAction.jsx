@@ -35,7 +35,7 @@ export const addBookmarkToFile = (messageId, folderId, fileId) => async (dispatc
     dispatch(setLoading(true));
     const response = await API.post("/bookmark", { messageId, folderId, fileId },{
         withCredentials:true
-    });
+    }); 
     dispatch(addBookmark(response.data.bookmark));
     dispatch(setLoading(false));
     return response.data;

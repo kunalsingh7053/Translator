@@ -8,5 +8,5 @@ export const store = configureStore({
     userReducer: userSlice,
     msg: msgReducer,
     bookmark: bookmarkReducer,
-  },
+  }, 
 });
