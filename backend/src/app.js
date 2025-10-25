@@ -23,14 +23,12 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS not allowed"));
-    }
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) callback(null, true);
+    else callback(new Error("CORS not allowed"));
   },
-  credentials: true, // allow cookies
+  credentials: true,
 }));
+
 
 // ------------------ 2️⃣ API Routes ------------------
 app.use("/api/auth", authRoutes);

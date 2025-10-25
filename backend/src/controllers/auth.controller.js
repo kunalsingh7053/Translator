@@ -58,12 +58,13 @@ async function login(req,res){
 return res.status(400).json({message:"Invalid password"})
     }
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-res.cookie("token", jwtToken, {
+res.cookie("token", token, {
   httpOnly: true,
-  secure: true,       // must be true in production HTTPS
-  sameSite: "none",   // required for cross-site cookies
-  maxAge: 24 * 60 * 60 * 1000
+  secure: process.env.NODE_ENV === "production", // HTTPS me true
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 24 * 60 * 60 * 1000, // 1 day
 });
+
 
 
     res.status(200).json({
