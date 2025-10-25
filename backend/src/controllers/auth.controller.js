@@ -33,7 +33,7 @@ async function register(req,res){
   secure: false,               // must be false for localhost testing
   sameSite: "lax",             // allows cross-site requests
   maxAge: 1000 * 60 * 60 * 24  // 1 day
-}).json({ success: true, user });
+})
 
     res.status(201).json({
         message:"User registered successfully",
@@ -63,7 +63,7 @@ return res.status(400).json({message:"Invalid password"})
   secure: false,               // must be false for localhost testing
   sameSite: "lax",             // allows cross-site requests
   maxAge: 1000 * 60 * 60 * 24  // 1 day
-}).json({ success: true, user });
+})
 
     res.status(200).json({
         message:"User logged in successfully",
