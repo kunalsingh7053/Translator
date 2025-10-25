@@ -7,48 +7,33 @@ const translateText = require("../service/translator.service")
 const mongoose = require("mongoose");
 
 
+// ---------------- Translate Text ----------------
 async function translateChat(req, res) {
   try {
     const { title, targetLang, sourceLang } = req.body;
-    const userId = req.user?._id || null;
+    const userId = req.user?._id;
 
-    console.log("📥 Incoming translateChat request:", {
-      title,
-      targetLang,
-      sourceLang,
-      userId,
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+    if (!title || !sourceLang || !targetLang)
+      return res.status(400).json({ success: false, message: "All fields are required" });
+
+    console.log("📥 Incoming translateChat request:", { title, sourceLang, targetLang, userId });
+
+    // Call translation service
+    const translatedText = await translateService(userId, title.trim(), targetLang.trim(), sourceLang.trim());
+
+    if (!translatedText)
+      return res.status(500).json({ success: false, message: "Translation failed (No response from service)" });
+
+    // Save in DB
+    const msg = await msgModel.create({
+      user: userId,
+      originalText: title.trim(),
+      translatedText,
+      sourceLang: sourceLang.trim(),
+      targetLang: targetLang.trim(),
     });
- 
-    if (!title) {
-      return res.status(400).json({ success: false, message: "Text is required" });
-    }
 
-    // Trim inputs to remove extra spaces
-    const translatedText = await translateText(
-      userId,
-      title.trim(),
-      targetLang.trim(),
-      sourceLang.trim()
-    );
-
-    console.log("📤 Translation result:", translatedText);
-
-    if (!translatedText) {
-      return res.status(500).json({
-        success: false,
-        message: "Translation failed (No response from API)",
-      });
-    } 
-   
-const msg = await msgModel.create({
-  user: userId,
-  originalText: title.trim(),
-  translatedText,
-  sourceLang: sourceLang.trim(),
-  targetLang: targetLang.trim(),
-});
-
-    
     res.json({
       success: true,
       translatedText,
@@ -57,14 +42,15 @@ const msg = await msgModel.create({
         originalText: msg.originalText,
         translatedText: msg.translatedText,
         sourceLang: msg.sourceLang,
-        targetLang: msg.targetLang
-      }
+        targetLang: msg.targetLang,
+      },
     });
   } catch (error) {
     console.error("💥 Error in translateChat:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 }
+
 
 async function chatHistory(req,res)
 {
