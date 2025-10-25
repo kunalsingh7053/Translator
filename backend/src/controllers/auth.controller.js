@@ -28,7 +28,13 @@ async function register(req,res){
         language
     })
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-    res.cookie("token",token)
+    res.cookie("token", jwtToken, {
+  httpOnly: true,             // cannot be accessed by JS (good for security)
+  secure: false,               // must be false for localhost testing
+  sameSite: "lax",             // allows cross-site requests
+  maxAge: 1000 * 60 * 60 * 24  // 1 day
+}).json({ success: true, user });
+
     res.status(201).json({
         message:"User registered successfully",
         user:{
@@ -52,7 +58,13 @@ async function login(req,res){
 return res.status(400).json({message:"Invalid password"})
     }
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-    res.cookie("token",token)
+   res.cookie("token", jwtToken, {
+  httpOnly: true,             // cannot be accessed by JS (good for security)
+  secure: false,               // must be false for localhost testing
+  sameSite: "lax",             // allows cross-site requests
+  maxAge: 1000 * 60 * 60 * 24  // 1 day
+}).json({ success: true, user });
+
     res.status(200).json({
         message:"User logged in successfully",
         user:{
