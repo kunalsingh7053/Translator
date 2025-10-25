@@ -13,4 +13,8 @@ router.get('/folders', authMiddleware.authUser, bookmarkController.getFolders);
 router.get('/files/:folderId', authMiddleware.authUser, bookmarkController.getFiles);
 router.get('/bookmarks/:fileId', authMiddleware.authUser, bookmarkController.getBookmarks);
 
+
+//delete endpoints
+router.delete("/folderdelete/:folderId",authMiddleware.authUser,bookmarkController.deleteFolder)
+router.delete("/filedelete/:fileId",authMiddleware.authUser,bookmarkController.deleteFile)
 module.exports = router;

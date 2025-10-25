@@ -11,7 +11,7 @@ const initialState = {
 const bookmarkSlice = createSlice({
   name: "bookmark",
   initialState,
-  reducers: {
+  reducers: { 
     setLoading: (state, action) => {
       state.loading = action.payload;
     },

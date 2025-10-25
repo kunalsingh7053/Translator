@@ -79,4 +79,55 @@ export const fetchBookmarks = (fileId) => async (dispatch) => {
   } catch (error) {
     dispatch(setError(error.response?.data?.message || "Failed to fetch bookmarks"));
   }
+}; 
+
+export const deleteFolder = (folderId) => async (dispatch, getState) => {
+  try {
+    dispatch(setLoading(true));
+
+    // ✅ FIXED URL + added withCredentials
+    const response = await API.delete(`/folderdelete/${folderId}`, {
+      withCredentials: true,
+    });
+
+    const updatedFolders = getState().bookmark.folders.filter(
+      (folder) => folder._id !== folderId
+    );
+
+    dispatch(setFolders(updatedFolders));
+    dispatch(setLoading(false));
+    return response.data;
+  } catch (error) {
+    dispatch(
+      setError(error.response?.data?.message || "Failed to delete folder")
+    );
+    dispatch(setLoading(false));
+    throw error;
+  }
 };
+
+
+export const deleteFile = (fileId)=> async(dispatch,getState)=>{
+ try {
+    dispatch(setLoading(true));
+
+    // ✅ FIXED URL + added withCredentials
+    const response = await API.delete(`/filedelete/${fileId}`, {
+      withCredentials: true,
+    });
+
+    const updatedFiles = getState().bookmark.files.filter(
+      (file) => file._id !== fileId
+    );
+
+    dispatch(setFiles(updatedFiles));
+    dispatch(setLoading(false));
+    return response.data;
+  } catch (error) {
+    dispatch(
+      setError(error.response?.data?.message || "Failed to delete folder")
+    );
+    dispatch(setLoading(false));
+    throw error;
+  }
+}

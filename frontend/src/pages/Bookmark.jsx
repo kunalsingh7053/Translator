@@ -2,8 +2,22 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast'
 import Navbar from '../components/Navbar'
-import { createFolder, createFile, fetchFolders, fetchFiles, fetchBookmarks } from '../features/actions/bookmarkAction'
-import { FolderIcon, DocumentIcon, PlusIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import {
+  createFolder,
+  createFile,
+  fetchFolders,
+  fetchFiles,
+  fetchBookmarks,
+  deleteFolder,
+  deleteFile, // ✅ added
+} from '../features/actions/bookmarkAction'
+import {
+  FolderIcon,
+  DocumentIcon,
+  PlusIcon,
+  ChevronRightIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline'
 
 const Bookmark = () => {
   const dispatch = useDispatch()
@@ -13,30 +27,35 @@ const Bookmark = () => {
   const [showNewFolderDialog, setShowNewFolderDialog] = useState(false)
   const [showNewFileDialog, setShowNewFileDialog] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
-  const [newFileName, setNewFileName] = useState('') 
+  const [newFileName, setNewFileName] = useState('')
 
+  // Fetch all folders initially
   useEffect(() => {
     dispatch(fetchFolders())
   }, [dispatch])
 
+  // Fetch files when a folder is selected
   useEffect(() => {
     if (selectedFolder) {
       dispatch(fetchFiles(selectedFolder._id))
     }
   }, [dispatch, selectedFolder])
 
+  // Fetch bookmarks when a file is selected
   useEffect(() => {
     if (selectedFile) {
       dispatch(fetchBookmarks(selectedFile._id))
     }
   }, [dispatch, selectedFile])
 
+  // Show error toast
   useEffect(() => {
     if (error) {
       toast.error(error)
     }
   }, [error])
 
+  // ✅ Create folder handler
   const handleCreateFolder = async (e) => {
     e.preventDefault()
     try {
@@ -44,23 +63,56 @@ const Bookmark = () => {
       setNewFolderName('')
       setShowNewFolderDialog(false)
       toast.success('Folder created successfully')
-    } catch (error) {
+    } catch {
       toast.error('Failed to create folder')
     }
   }
 
+  // ✅ Create file handler
   const handleCreateFile = async (e) => {
     e.preventDefault()
-    if (!selectedFolder) {
-      return toast.error('Please select a folder first')
-    }
+    if (!selectedFolder) return toast.error('Please select a folder first')
+
     try {
       await dispatch(createFile(selectedFolder._id, newFileName))
       setNewFileName('')
       setShowNewFileDialog(false)
       toast.success('File created successfully')
-    } catch (error) {
+    } catch {
       toast.error('Failed to create file')
+    }
+  }
+
+  // ✅ Delete folder handler
+  const handleDeleteFolder = async (folderId) => {
+    if (!window.confirm('Are you sure you want to delete this folder?')) return
+    try {
+      await dispatch(deleteFolder(folderId))
+      toast.success('Folder deleted successfully')
+
+      // Clear selected folder if deleted
+      if (selectedFolder && selectedFolder._id === folderId) {
+        setSelectedFolder(null)
+        setSelectedFile(null)
+      }
+    } catch {
+      toast.error('Failed to delete folder')
+    }
+  }
+
+  // ✅ Delete file handler
+  const handleDeleteFile = async (fileId) => {
+    if (!window.confirm('Are you sure you want to delete this file?')) return
+    try {
+      await dispatch(deleteFile(fileId))
+      toast.success('File deleted successfully')
+
+      // Clear selected file if deleted
+      if (selectedFile && selectedFile._id === fileId) {
+        setSelectedFile(null)
+      }
+    } catch {
+      toast.error('Failed to delete file')
     }
   }
 
@@ -81,29 +133,36 @@ const Bookmark = () => {
           </div>
 
           <div className="grid grid-cols-12 gap-6">
-            {/* Folders Panel */}
+            {/* ✅ Folders Panel */}
             <div className="col-span-3 bg-white shadow rounded-lg p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium text-gray-900">Folders</h2>
               </div>
               <div className="space-y-2">
                 {folders.map(folder => (
-                  <button
+                  <div
                     key={folder._id}
-                    onClick={() => setSelectedFolder(folder)}
-                    className={`w-full flex items-center p-2 rounded-md text-left ${
+                    className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${
                       selectedFolder?._id === folder._id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
                     }`}
                   >
-                    <FolderIcon className="h-5 w-5 mr-2" />
-                    <span className="flex-1 truncate">{folder.title}</span>
-                    <ChevronRightIcon className="h-4 w-4" />
-                  </button>
+                    <div onClick={() => setSelectedFolder(folder)} className="flex items-center flex-1">
+                      <FolderIcon className="h-5 w-5 mr-2" />
+                      <span className="truncate">{folder.title}</span>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteFolder(folder._id)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                      title="Delete folder"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Files Panel */}
+            {/* ✅ Files Panel */}
             <div className="col-span-4 bg-white shadow rounded-lg p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium text-gray-900">Files</h2>
@@ -119,22 +178,35 @@ const Bookmark = () => {
               </div>
               <div className="space-y-2">
                 {files.map(file => (
-                  <button
+                  <div
                     key={file._id}
-                    onClick={() => setSelectedFile(file)}
-                    className={`w-full flex items-center p-2 rounded-md text-left ${
-                      selectedFile?._id === file._id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                    className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${
+                      selectedFile?._id === file._id
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'hover:bg-gray-50'
                     }`}
                   >
-                    <DocumentIcon className="h-5 w-5 mr-2" />
-                    <span className="flex-1 truncate">{file.title}</span>
-                    <ChevronRightIcon className="h-4 w-4" />
-                  </button>
+                    <div
+                      onClick={() => setSelectedFile(file)}
+                      className="flex items-center flex-1"
+                    >
+                      <DocumentIcon className="h-5 w-5 mr-2" />
+                      <span className="truncate">{file.title}</span>
+                    </div>
+                    {/* ✅ Delete File Button */}
+                    <button
+                      onClick={() => handleDeleteFile(file._id)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                      title="Delete file"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Bookmarks Panel */}
+            {/* ✅ Bookmarks Panel */}
             <div className="col-span-5 bg-white shadow rounded-lg p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Translations</h2>
               {selectedFile ? (
@@ -161,7 +233,7 @@ const Bookmark = () => {
         </div>
       </div>
 
-      {/* New Folder Dialog */}
+      {/* ✅ New Folder Dialog */}
       {showNewFolderDialog && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
@@ -195,7 +267,7 @@ const Bookmark = () => {
         </div>
       )}
 
-      {/* New File Dialog */}
+      {/* ✅ New File Dialog */}
       {showNewFileDialog && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
@@ -229,7 +301,7 @@ const Bookmark = () => {
         </div>
       )}
 
-      {/* Loading Overlay */}
+      {/* ✅ Loading Overlay */}
       {loading && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-25 flex items-center justify-center">
           <div className="bg-white p-4 rounded-full">

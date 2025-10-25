@@ -127,7 +127,7 @@ async function getFiles(req, res) {
   }
 }
 
-async function getBookmarks(req, res) {
+async function getBookmarks(req, res) { 
   try {
     const userId = req.user._id;
     if (!userId) {
@@ -146,11 +146,64 @@ async function getBookmarks(req, res) {
   }
 }
 
+async function deleteFolder(req, res) {
+  try {
+    const userId = req.user._id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // ✅ Correctly extract folderId
+    const { folderId } = req.params;
+
+    // ✅ Check if folder exists and belongs to user
+    const folder = await chatfolderModel.findOne({ _id: folderId, user: userId });
+    if (!folder) {
+      return res.status(404).json({ message: "Folder Not Found" });
+    }
+
+    // ✅ Delete all files under this folder
+    await chatfileModel.deleteMany({ chatfolder: folderId, user: userId });
+
+    // ✅ Delete all bookmarks under those files (optional but recommended)
+    await bookmarkModel.deleteMany({ folder: folderId, user: userId });
+
+    // ✅ Finally delete the folder
+    await chatfolderModel.deleteOne({ _id: folderId, user: userId });
+
+    return res.status(200).json({
+      message: "Folder, files, and bookmarks deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Error in deleteFolder:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+async function deleteFile(req,res){
+  try {
+        const userId = req.user._id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  const {fileId} = req.params;
+  await chatfileModel.deleteOne({_id: fileId, user: userId})
+      return res.status(200).json({ message: "File deleted successfully" });
+
+
+  } catch (error) {
+    
+  }
+}
+
 module.exports = {
   addBookmark,
   createFolder,
   createFile,
   getFolders,
   getFiles,
-  getBookmarks
+  getBookmarks,
+  deleteFolder,
+  deleteFile
 }
