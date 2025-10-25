@@ -11,27 +11,34 @@ const langMap = {
   // add more if needed
 };
 
-async function translateText( text, targetLang, sourceLang = "English") {
+async function translateText(text, targetLang, sourceLang = "English") {
   try {
     if (!text) throw new Error("Text is required");
 
-    // convert full name to code
     sourceLang = langMap[sourceLang] || "en";
     targetLang = langMap[targetLang] || "hi";
 
     const url = `https://lingva.ml/api/v1/${sourceLang}/${targetLang}/${encodeURIComponent(text)}`;
+    console.log("Translation API URL:", url);
 
-    const response = await axios.get(url);
+    const response = await axios.get(url).catch(err => {
+      console.error("Lingva API call failed:", err.message);
+      return null;
+    });
 
-    if (response.data && response.data.translation) {
+    console.log("Lingva API response:", response?.data);
+
+    if (response && response.data && response.data.translation) {
       return response.data.translation;
     } else {
-      throw new Error("Translation failed (No response from API)");
+      console.warn("Translation failed, returning fallback text");
+      return "[translation failed]";
     }
   } catch (error) {
     console.error("Error translating text:", error.message);
-    return null;
+    return "[translation failed]";
   }
 }
+
 
 module.exports = translateText;
