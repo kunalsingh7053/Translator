@@ -20,7 +20,7 @@ async function translateChat(req, res) {
     console.log("📥 Incoming translateChat request:", { title, sourceLang, targetLang, userId });
 
     // Call translation service
-    const translatedText = await translateText(userId, title.trim(), targetLang.trim(), sourceLang.trim());
+    const translatedText = await translateText( title.trim(), targetLang.trim(), sourceLang.trim());
 
     if (!translatedText)
       return res.status(500).json({ success: false, message: "Translation failed (No response from service)" });

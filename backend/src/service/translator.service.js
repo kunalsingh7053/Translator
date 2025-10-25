@@ -11,7 +11,7 @@ const langMap = {
   // add more if needed
 };
 
-async function translateText(userId, text, targetLang, sourceLang = "English") {
+async function translateText( text, targetLang, sourceLang = "English") {
   try {
     if (!text) throw new Error("Text is required");
 
