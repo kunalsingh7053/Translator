@@ -5,7 +5,7 @@ const chatfileModel = require("../models/chatfile.model")
 const chatfolderModel = require("../models/chatfolder.model")
 const translateText = require("../service/translator.service")
 const mongoose = require("mongoose");
-
+ 
 
 // ---------------- Translate Text ----------------
 async function translateChat(req, res) {
@@ -20,7 +20,7 @@ async function translateChat(req, res) {
     console.log("📥 Incoming translateChat request:", { title, sourceLang, targetLang, userId });
 
     // Call translation service
-    const translatedText = await translateService(userId, title.trim(), targetLang.trim(), sourceLang.trim());
+    const translatedText = await translateText(userId, title.trim(), targetLang.trim(), sourceLang.trim());
 
     if (!translatedText)
       return res.status(500).json({ success: false, message: "Translation failed (No response from service)" });
