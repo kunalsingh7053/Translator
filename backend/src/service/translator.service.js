@@ -1,44 +1,41 @@
-const userModel = require("../models/user.model"); // adjust path
-const axios = require("axios");
+const { Configuration, OpenAIApi } = require("openai");
 
-// Full name to code mapping
 const langMap = {
-  English: "en",
-  Hindi: "hi",
-  Spanish: "es",
-  French: "fr",
-  German: "de",
-  // add more if needed
+  English: "English",
+  Hindi: "Hindi",
+  Spanish: "Spanish",
+  French: "French",
+  German: "German",
+  // add more if needed 
 };
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY, // ⚠️ Set in Render Environment
+});
+
+const openai = new OpenAIApi(configuration);
 
 async function translateText(text, targetLang, sourceLang = "English") {
   try {
     if (!text) throw new Error("Text is required");
 
-    sourceLang = langMap[sourceLang] || "en";
-    targetLang = langMap[targetLang] || "hi";
+    sourceLang = langMap[sourceLang] || "English";
+    targetLang = langMap[targetLang] || "Hindi";
 
-    const url = `https://lingva.ml/api/v1/${sourceLang}/${targetLang}/${encodeURIComponent(text)}`;
-    console.log("Translation API URL:", url);
+    const prompt = `Translate the following text from ${sourceLang} to ${targetLang}:\n\n"${text}"`;
 
-    const response = await axios.get(url).catch(err => {
-      console.error("Lingva API call failed:", err.message);
-      return null;
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
     });
 
-    console.log("Lingva API response:", response?.data);
-
-    if (response && response.data && response.data.translation) {
-      return response.data.translation;
-    } else {
-      console.warn("Translation failed, returning fallback text");
-      return "[translation failed]";
-    }
+    const translation = completion.data.choices[0].message.content.trim();
+    return translation;
   } catch (error) {
-    console.error("Error translating text:", error.message);
-    return "[translation failed]";
+    console.error("Translation error:", error.message);
+    // fallback: return original text
+    return text;
   }
 }
-
 
 module.exports = translateText;
