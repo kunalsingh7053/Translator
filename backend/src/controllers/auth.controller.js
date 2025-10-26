@@ -78,13 +78,20 @@ res.cookie("token", token, {
     })
 }
 async function logout(req, res) {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
-  res.status(200).json({ message: "User logged out successfully" });
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // local par false chalega
+      sameSite: "lax",
+      path: "/", // ye bohot important hai!
+    });
+    return res.status(200).json({ message: "User logged out successfully" });
+  } catch (err) {
+    console.error("Logout error:", err);
+    return res.status(500).json({ message: "Logout failed" });
+  }
 }
+
 
 async function getProfile(req,res){
 
