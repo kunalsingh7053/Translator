@@ -15,17 +15,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS setup
-const allowedOrigins = [
-  "http://localhost:5173",                       // dev
-  "https://translator-1-sa98.onrender.com"       // production
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) callback(null, true);
-    else callback(new Error("CORS not allowed"));
-  },
+  origin: ["https://translator-1-sa98.onrender.com", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // 🔥 added PATCH
   credentials: true,
 }));
 
@@ -35,13 +27,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/translator", translatorRoutes);
 app.use("/api", bookmarkRoutes);
 
-// ------------------ 3️⃣ Serve React Frontend ------------------
-const frontendDistPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendDistPath));
-
-// ------------------ 4️⃣ Catch-all for React Router ------------------
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(frontendDistPath, "index.html"));
-});
 
 module.exports = app;

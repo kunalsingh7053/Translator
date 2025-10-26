@@ -28,13 +28,12 @@ async function register(req,res){
         language
     })
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-res.cookie("token", token, {
+   res.cookie("token", token, {
   httpOnly: true,
-  secure: false,   // localhost ke liye false
-  sameSite: "lax", // localhost ke liye lax
-  path: "/",       // must match logout
-  maxAge: 7 * 24 * 60 * 60 * 1000
+  secure: true,       // Render uses HTTPS → must be true
+  sameSite: "none"    // Needed for cross-site requests
 });
+
 
 
     res.status(201).json({
@@ -60,11 +59,10 @@ async function login(req,res){
 return res.status(400).json({message:"Invalid password"})
     }
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-res.cookie("token", token, {
+ res.cookie("token", token, {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
-  path: "/",
+  secure: true,       // 🔥 Render uses HTTPS → must be true
+  sameSite: "none"    // 🔥 needed for cross-site cookies
 });
 
 
@@ -86,11 +84,10 @@ async function logout(req, res) {
   try {
     console.log("🔹 Clearing cookie...");
 
-  res.clearCookie("token", {
+   res.clearCookie("token", {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
-  path: "/",
+  secure: true,
+  sameSite: "none"
 });
 
 
