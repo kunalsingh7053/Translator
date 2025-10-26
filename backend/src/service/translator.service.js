@@ -44,12 +44,14 @@ async function translateText(text, targetLang, sourceLang = "English") {
     targetLang = langMap[targetLang] || "Hindi";
 
     // Strong prompt for GPT translation
-    const prompt = `
+const prompt = `
 Translate the following text from ${sourceLang} to ${targetLang}.
-Respond ONLY with the translated text, without explanations, quotes, or transliterations.
-Always translate every word, including short greetings or single words.
+Always translate every word except proper nouns.
+Do not include explanations, quotes, or transliterations.
+Respond ONLY with the translated text.
 Text: "${text}"
 `;
+
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
