@@ -60,10 +60,11 @@ return res.status(400).json({message:"Invalid password"})
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
 res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // HTTPS me true
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 24 * 60 * 60 * 1000, // 1 day
+  secure: false, // ⚠️ same as logout
+  sameSite: "lax",
+  path: "/", // ⚠️ must match logout
 });
+
 
 
 
@@ -77,18 +78,22 @@ res.cookie("token", token, {
         }
     })
 }
+// backend/src/controllers/auth.controller.js
 async function logout(req, res) {
   try {
+    console.log("🔹 Clearing cookie...");
+
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // local par false chalega
+      secure: false, // ⚠️ localhost par false rakhna, Render (https) par true
       sameSite: "lax",
-      path: "/", // ye bohot important hai!
+      path: "/", // ⚠️ same as login
     });
-    return res.status(200).json({ message: "User logged out successfully" });
+
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (err) {
     console.error("Logout error:", err);
-    return res.status(500).json({ message: "Logout failed" });
+    res.status(500).json({ message: "Logout failed" });
   }
 }
 
