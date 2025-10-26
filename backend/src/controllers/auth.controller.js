@@ -28,12 +28,14 @@ async function register(req,res){
         language
     })
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
-res.cookie("token", jwtToken, {
+res.cookie("token", token, {
   httpOnly: true,
-  secure: true,       // must be true in production HTTPS
-  sameSite: "none",   // required for cross-site cookies
-  maxAge: 24 * 60 * 60 * 1000
+  secure: false,   // localhost ke liye false
+  sameSite: "lax", // localhost ke liye lax
+  path: "/",       // must match logout
+  maxAge: 7 * 24 * 60 * 60 * 1000
 });
+
 
     res.status(201).json({
         message:"User registered successfully",
@@ -60,10 +62,11 @@ return res.status(400).json({message:"Invalid password"})
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{ expiresIn:"7d"})
 res.cookie("token", token, {
   httpOnly: true,
-  secure: false, // ⚠️ same as logout
+  secure: false,
   sameSite: "lax",
-  path: "/", // ⚠️ must match logout
+  path: "/",
 });
+
 
 
 
@@ -83,12 +86,13 @@ async function logout(req, res) {
   try {
     console.log("🔹 Clearing cookie...");
 
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: false, // ⚠️ localhost par false rakhna, Render (https) par true
-      sameSite: "lax",
-      path: "/", // ⚠️ same as login
-    });
+  res.clearCookie("token", {
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  path: "/",
+});
+
 
     res.status(200).json({ message: "User logged out successfully" });
   } catch (err) {
