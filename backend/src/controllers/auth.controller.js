@@ -77,10 +77,15 @@ res.cookie("token", token, {
         }
     })
 }
-async function logout(req,res){
-    res.clearCookie("token")
-    res.status(200).json({message:"User logged out successfully"})
+async function logout(req, res) {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+  res.status(200).json({ message: "User logged out successfully" });
 }
+
 async function getProfile(req,res){
 
 res.json(req.user);
