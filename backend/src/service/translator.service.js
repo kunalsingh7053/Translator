@@ -9,18 +9,17 @@ const axios = require("axios");
  */
 async function translateText(text, targetLang = "hi", sourceLang = "en") {
   try {
-    const response = await axios.post(
-      "https://libretranslate.com/translate",
-      {
-        q: text,
-        source: sourceLang,
-        target: targetLang,
-        format: "text"
-      },
-      {
-        headers: { "Content-Type": "application/json" }
-      }
-    );
+  const response = await axios.post(
+  "https://libretranslate.de/translate", // more stable public instance
+  {
+    q: text,
+    source: sourceLang,
+    target: targetLang,
+    format: "text"
+  },
+  { headers: { "Content-Type": "application/json" } }
+);
+
 
     return response.data.translatedText;
   } catch (err) {
