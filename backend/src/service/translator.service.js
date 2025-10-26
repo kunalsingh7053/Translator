@@ -11,29 +11,43 @@ const langMap = {
   // Add more languages if needed
 };
 
+// Fallback dictionary for common short words
+const fallbackDict = {
+  "hello": "नमस्ते",
+  "hi": "नमस्ते",
+  "good morning": "सुप्रभात",
+  "good night": "शुभ रात्रि",
+  "thank you": "धन्यवाद",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "please": "कृपया",
+};
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-/**
- * Translate text from sourceLang to targetLang
- * @param {string} text - Text to translate
- * @param {string} targetLang - Target language
- * @param {string} sourceLang - Source language (default English)
- * @returns {string} Translated text
- */
+
 async function translateText(text, targetLang, sourceLang = "English") {
   try {
     if (!text) throw new Error("Text is required");
 
+    // Check fallback dictionary first
+    const fallbackKey = text.trim().toLowerCase();
+    if (fallbackDict[fallbackKey] && (targetLang === "Hindi")) {
+      return fallbackDict[fallbackKey];
+    }
+
+    // Use language map defaults
     sourceLang = langMap[sourceLang] || "English";
     targetLang = langMap[targetLang] || "Hindi";
 
-    // Strong prompt to ensure accurate translation
+    // Strong prompt for GPT translation
     const prompt = `
 Translate the following text from ${sourceLang} to ${targetLang}.
-Respond ONLY with the translated text, without explanations or quotes.
+Respond ONLY with the translated text, without explanations, quotes, or transliterations.
+Always translate every word, including short greetings or single words.
 Text: "${text}"
 `;
 
@@ -50,7 +64,7 @@ Text: "${text}"
 
   } catch (error) {
     console.error("Translation error:", error.message);
-    return text; // fallback
+    return text; // fallback in case of error
   }
 }
 
