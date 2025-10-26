@@ -18,6 +18,10 @@ const openai = new OpenAI({
 
 /**
  * Translate text from sourceLang to targetLang
+ * @param {string} text - Text to translate
+ * @param {string} targetLang - Target language
+ * @param {string} sourceLang - Source language (default English)
+ * @returns {string} Translated text
  */
 async function translateText(text, targetLang, sourceLang = "English") {
   try {
@@ -26,11 +30,20 @@ async function translateText(text, targetLang, sourceLang = "English") {
     sourceLang = langMap[sourceLang] || "English";
     targetLang = langMap[targetLang] || "Hindi";
 
-    const prompt = `Translate the following text from ${sourceLang} to ${targetLang}:\n\n"${text}"`;
+    // Strong prompt to ensure accurate translation
+    const prompt = `
+Translate the following text from ${sourceLang} to ${targetLang}.
+Respond ONLY with the translated text, without explanations or quotes.
+Text: "${text}"
+`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: "You are a professional translator. Always translate accurately." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.3 // deterministic translation
     });
 
     return completion.choices[0].message.content.trim();
