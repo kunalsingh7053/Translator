@@ -1,20 +1,30 @@
 const axios = require("axios");
 
-// Language map
 const langMap = {
   English: "en", Hindi: "hi", Spanish: "es", French: "fr", German: "de",
   Portuguese: "pt", Italian: "it", Chinese: "zh", Japanese: "ja",
   Korean: "ko", Russian: "ru", Arabic: "ar", Turkish: "tr"
 };
 
-// API endpoints with fallback
+// Free APIs in fallback order
 const APIS = [
   {
-    name: "LingvaTranslate",
+    name: "Lingva (Google Mirror)",
     translate: async (text, sourceCode, targetCode) => {
-      const url = `https://lingva.ml/api/v1/${sourceCode}/${targetCode}/${encodeURIComponent(text)}`;
+      const url = `https://lingva.pot-app.com/api/v1/${sourceCode}/${targetCode}/${encodeURIComponent(text)}`;
       const res = await axios.get(url, { timeout: 8000 });
       return res.data.translation;
+    }
+  },
+  {
+    name: "GoogleTranslate Proxy",
+    translate: async (text, sourceCode, targetCode) => {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await axios.get(url, { timeout: 8000 });
+      if (Array.isArray(res.data)) {
+        return res.data[0].map(item => item[0]).join("");
+      }
+      return null;
     }
   },
   {
@@ -25,33 +35,22 @@ const APIS = [
         source: sourceCode,
         target: targetCode,
         format: "text"
-      }, { timeout: 8000 });
+      }, { timeout: 10000 });
       return res.data.translatedText;
-    }
-  },
-  {
-    name: "MyMemory",
-    translate: async (text, sourceCode, targetCode) => {
-      const res = await axios.get("https://api.mymemory.translated.net/get", {
-        params: { q: text, langpair: `${sourceCode}|${targetCode}` },
-        timeout: 8000
-      });
-      return res.data.responseData.translatedText;
     }
   }
 ];
 
-// Optional: Pre-processing for better translations
+// Small cleanup for input
 function preprocessText(text) {
   return text.replace(/\s+/g, " ").trim();
 }
 
-// Optional: Post-processing cleanup
+// Cleanup output
 function postprocessText(text) {
   return text.replace(/^"|"$/g, "").trim();
 }
 
-// Master translator
 async function translateText(text, targetLang = "Hindi", sourceLang = "English") {
   const targetCode = langMap[targetLang] || targetLang.toLowerCase();
   const sourceCode = langMap[sourceLang] || sourceLang.toLowerCase();
@@ -59,7 +58,7 @@ async function translateText(text, targetLang = "Hindi", sourceLang = "English")
   if (targetCode === sourceCode) return text;
 
   const cleanText = preprocessText(text);
-  console.log(`Translating "${cleanText}" from ${sourceLang} ➜ ${targetLang}`);
+  console.log(`🌐 Translating "${cleanText}" from ${sourceLang} ➜ ${targetLang}`);
 
   for (let api of APIS) {
     try {
@@ -74,7 +73,8 @@ async function translateText(text, targetLang = "Hindi", sourceLang = "English")
     }
   }
 
-  throw new Error("All translation APIs failed");
+  console.error("❌ All APIs failed");
+  return text;
 }
 
 module.exports = translateText;
