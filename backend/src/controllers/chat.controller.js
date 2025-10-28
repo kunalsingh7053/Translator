@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 // ---------------- Translate Text ----------------
 async function translateChat(req, res) {
   try {
-    const { title, targetLang, sourceLang } = req.body;
+    const { title, targetLang, sourceLang, style } = req.body;
     const userId = req.user?._id;
 
     if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -19,17 +19,17 @@ async function translateChat(req, res) {
 
     console.log("📥 Incoming translateChat request:", { title, sourceLang, targetLang, userId });
 
-    // Call translation service
-    const translatedText = await translateText( title.trim(), targetLang.trim(), sourceLang.trim());
+    // Call Gemini translation
+    const translatedText = await translateText(title.trim(), targetLang.trim(), sourceLang.trim(), style || "neutral");
 
     if (!translatedText)
-      return res.status(500).json({ success: false, message: "Translation failed (No response from service)" });
+      return res.status(500).json({ success: false, message: "Translation failed" });
 
     // Save in DB
     const msg = await msgModel.create({
       user: userId,
       originalText: title.trim(),
-      translatedText,
+      translatedText,  // always a string
       sourceLang: sourceLang.trim(),
       targetLang: targetLang.trim(),
     });

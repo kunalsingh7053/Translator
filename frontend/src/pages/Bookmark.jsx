@@ -212,15 +212,16 @@ const Bookmark = () => {
               {selectedFile ? (
                 bookmarks.length > 0 ? (
                   <div className="space-y-4">
-                    {bookmarks.map(bookmark => (
-                      <div key={bookmark._id} className="border rounded-lg p-4 hover:bg-gray-50">
-                        <p className="text-gray-600 mb-2">{bookmark.msg.sourceText}</p>
-                        <p className="text-gray-900">{bookmark.msg.translatedText}</p>
-                        <div className="mt-2 text-sm text-gray-500">
-                          {bookmark.msg.sourceLang} → {bookmark.msg.targetLang}
-                        </div>
-                      </div>
-                    ))}
+                   {bookmarks.map(bookmark => (
+  <div key={bookmark._id} className="border rounded-lg p-4 hover:bg-gray-50">
+    <p className="text-gray-600 mb-2">{bookmark.msg?.sourceText || "No source text"}</p>
+    <p className="text-gray-900">{bookmark.msg?.translatedText || "No translation"}</p>
+    <div className="mt-2 text-sm text-gray-500">
+      {bookmark.msg?.sourceLang || "?"} → {bookmark.msg?.targetLang || "?"}
+    </div>
+  </div>
+))}
+
                   </div>
                 ) : (
                   <p className="text-gray-500">No bookmarks in this file yet.</p>
