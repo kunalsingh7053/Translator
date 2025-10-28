@@ -1,42 +1,16 @@
-# Translator Project 🌐
+# React + Vite
 
-A full-stack **Translator web application** with user authentication, bookmarks, note management, translation sharing, and history tracking. Built with **React, Tailwind CSS, Node.js, Express, MongoDB, and Redux Toolkit**.  
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-This project uses **free, fast, and accurate translation APIs** and is deployed on **Render**.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 🔗 Live Demo
+## React Compiler
 
-[https://translator-1-sa98.onrender.com/](https://translator-1-sa98.onrender.com/)
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## 💻 Tech Stack
+## Expanding the ESLint configuration
 
-- **Frontend:** React, Tailwind CSS, Redux Toolkit  
-- **Backend:** Node.js, Express.js  
-- **Database:** MongoDB  
-- **Authentication & Security:** BcryptJS  
-- **Image Upload & Management:** Imgkit  
-- **Translation APIs:** Google API via Lingva & LibreTranslate  
-- **Other:** Axios for API requests  
-
----
-
-## ✨ Features
-
-- **User Authentication:** Register, Login, Logout, Permanent user deletion  
-- **Bookmarks:** Organize notes with folders and files  
-- **Translation Sharing:** Share translated text with friends across multiple platforms  
-- **History:** View current session or all-time translation history  
-- **User Profile:** Update profile details and profile picture  
-- **Real-time Translation:** Fast and accurate translations using free APIs  
-
----
-
-## 🚀 Installation
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/kunalsingh7053/Translator.git
-cd Translator
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
