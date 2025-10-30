@@ -8,7 +8,7 @@ This project uses **free, fast, and accurate translation APIs** and is deployed 
 
 ## 🔗 Live Demo
 
-[https://translator-1-sa98.onrender.com/](https://translator-1-sa98.onrender.com/)
+[https://fasttranslator.netlify.app/](https://fasttranslator.netlify.app/)
 
 ## 💻 Tech Stack
 
