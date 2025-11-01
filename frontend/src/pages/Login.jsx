@@ -16,7 +16,6 @@ const Login = () => {
   } = useForm({ mode: "onTouched" });
 
   const onSubmit = async (data) => {
-    console.log("Login Data:", data);
     const result = await dispatch(loginUser(data));
 
     if (result.success) {

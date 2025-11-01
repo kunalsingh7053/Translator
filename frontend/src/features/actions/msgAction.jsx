@@ -8,21 +8,18 @@ import {
 // ✅ Translate Text via backend API
 export const translateText = (inputText, sourceLang, targetLang) => async (dispatch) => {
   try {
-    console.log("🔹 Translating:", { inputText, sourceLang, targetLang });
 
     const res = await API.post("/translator/chat", {
       title: inputText,
       sourceLang,
       targetLang,
     });
-    console.log("response=>",res)
     if (!res.data.success) {
       throw new Error(res.data.message || "Translation failed");
     }
 
     const translatedText = res.data.translatedText;
     const msg = res.data.msg;
-    console.log("✅ Translation successful:", { translatedText, msg });
 
     dispatch(addMessage({ 
       id: msg._id,

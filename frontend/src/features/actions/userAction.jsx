@@ -4,7 +4,6 @@ import { loaduser, removeuser, setInitialized } from "../reducers/userSlice";
  
 //Register User
 export const registerUser = (userData)=> async(dispatch,getState)=>{
-    console.log("xyz",userData)
     try {
         const res = await API.post('/auth/register',{ 
             fullName:{
@@ -19,7 +18,6 @@ export const registerUser = (userData)=> async(dispatch,getState)=>{
     {
         withCredentials:true
     });
-  console.log(res.data)
     // normalize user: backend might return user at res.data.user or at res.data
     const userFromRes = res.data?.user ?? res.data
     dispatch(loaduser(userFromRes));

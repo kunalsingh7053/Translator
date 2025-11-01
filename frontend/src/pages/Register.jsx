@@ -18,7 +18,6 @@ const navigate = useNavigate();
   } = useForm({ mode: 'onTouched' })
 
   const onSubmit = async(data) => { 
-    console.log('Form Data:', data)
  // ✅ Call the Redux action and wait for the result
   const result = await  dispatch(registerUser(data));
 

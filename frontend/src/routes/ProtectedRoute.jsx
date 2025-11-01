@@ -8,7 +8,6 @@ const ProtectedRoute = ({ children }) => {
 
   // debug
   // eslint-disable-next-line no-console
-  console.log('ProtectedRoute state -> initialized:', initialized, 'users:', users);
 
   // still waiting for profile fetch to complete
   if (!initialized) return null; // or a spinner while we restore session
