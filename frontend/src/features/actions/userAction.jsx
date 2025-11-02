@@ -91,9 +91,9 @@ export const deleteAcccount = ()=> async(dispatch,getState)=>{
 export const fetchUserProfile = () => async (dispatch) => {
   try {
     const res = await API.get('/auth/profile', { withCredentials: true });
-    // If backend returns a user (either at res.data.user or at res.data) load it.
+    // If backend returns a user (either at res.data.user or at res.data) load it. 
     const fetchedUser = res?.data?.user ?? res?.data
-    if (fetchedUser) {
+    if (fetchedUser) { 
       dispatch(loaduser(fetchedUser));
             dispatch(setInitialized(true));
             return { success: true };

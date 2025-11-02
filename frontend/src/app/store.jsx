@@ -5,8 +5,8 @@ import bookmarkReducer from "../features/reducers/bookmarkSlice";
 
 export const store = configureStore({
   reducer: {
-    userReducer: userSlice,
+    userReducer: userSlice, 
     msg: msgReducer,
     bookmark: bookmarkReducer,
   }, 
-});
+}); 

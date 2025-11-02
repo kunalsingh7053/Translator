@@ -23,7 +23,7 @@ const Home = () => {
   const dispatch = useDispatch()
   const messages = useSelector(state => state.msg.messages)
   const lastMessage = messages[messages.length - 1]
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false); 
 
   // Bookmark states
   const [showBookmarkModal, setShowBookmarkModal] = useState(false)

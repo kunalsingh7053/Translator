@@ -5,7 +5,7 @@ import { updateUserProfile, logoutUser, deleteAcccount, fetchUserProfile } from 
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
-const Profile = () => {
+const Profile = () => { 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { users } = useSelector((state) => state.userReducer)
@@ -19,10 +19,10 @@ const Profile = () => {
     if (users) {
       reset({
         firstName: users.fullName?.firstName || users.firstName || '',
-        lastName: users.fullName?.lastName || users.lastName || '',
-        email: users.email || '',
+        lastName: users.fullName?.lastName || users.lastName || '', 
+        email: users.email || '', 
       })
-      setPreview(users.imgUrl || '')
+      setPreview(users.imgUrl || '') 
     }
   }, [users, reset])
 
@@ -87,7 +87,7 @@ const Profile = () => {
           <div className="flex flex-col items-center">
             <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden shadow-md border border-gray-200">
               <img
-                src={preview || '/imgs/show.jpg'}
+                src={preview || '/imgs/show.jpg'} 
                 alt="avatar"
                 className="w-full h-full object-cover"
               />

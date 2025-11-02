@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { logoutUser } from '../features/actions/userAction'
+import { logoutUser,fetchUserProfile } from '../features/actions/userAction'
 
 const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -10,6 +10,7 @@ const Navbar = () => {
   const location = useLocation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { users } = useSelector((state) => state.userReducer)
 
   // 👇 Close profile dropdown when clicking outside
   useEffect(() => {
@@ -21,7 +22,12 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
-
+  // 👇 Fetch user profile once when Navbar mounts (if not already fetched)
+  useEffect(() => {
+    
+      dispatch(fetchUserProfile());
+    
+  }, [dispatch]);
   return (
     <>
       {/* Navbar */}
@@ -80,7 +86,7 @@ const Navbar = () => {
                   className="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100"
                 >
                   <img
-                    src="/imgs/show.jpg"
+                 src={users?.imgUrl || '/imgs/show.jpg'} 
                     alt="profile"
                     className="h-9 w-9 rounded-full object-cover"
                   />

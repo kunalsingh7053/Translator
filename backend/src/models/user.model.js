@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
      },
     imgFileId:{
         type:String,
-        default:"68f454be5c7cd75eb8eaaa44"
+        default:"68f454be5c7cd75eb8eaaa44" 
     },
       language: {
         type: String,

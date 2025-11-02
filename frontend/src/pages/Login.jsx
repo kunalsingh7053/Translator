@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    register, 
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: "onTouched" });
@@ -37,7 +37,7 @@ const Login = () => {
             Log in to access your translations, saved history, and personalized preferences.
           </p>
           <div className="mt-6 h-48 rounded-lg overflow-hidden">
-            <img src="/imgs/show.jpg" alt="login" className="w-full h-full object-cover" />
+            <img src="https://i.pinimg.com/1200x/58/ec/72/58ec72a7e4a38b1c677e2aa37f2ceaeb.jpg" alt="login" className="w-full h-full object-cover" />
           </div>
         </div>
 

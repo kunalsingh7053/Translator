@@ -7,7 +7,7 @@ import {
   createFile,
   fetchFolders,
   fetchFiles,
-  fetchBookmarks,
+  fetchBookmarks, 
   deleteFolder,
   deleteFile,
 } from '../features/actions/bookmarkAction'
@@ -21,7 +21,7 @@ import {
 const Bookmark = () => {
   const dispatch = useDispatch()
   const { folders, files, bookmarks, loading, error } = useSelector(
-    (state) => state.bookmark
+    (state) => state.bookmark 
   )
   const [selectedFolder, setSelectedFolder] = useState(null)
   const [selectedFile, setSelectedFile] = useState(null)
