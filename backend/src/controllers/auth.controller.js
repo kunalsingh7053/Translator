@@ -49,6 +49,9 @@ async function register(req,res){
 // ⬇ ADD FOR GOOGLE LOGIN
 async function googleAuthSuccess(req, res) {
   try {
+    console.log("🔹 Google callback executed");
+console.log("🔹 User from Google:", req.user);
+
     if (!req.user) {
       return res.status(401).json({ message: "Google authentication failed" });
     }
