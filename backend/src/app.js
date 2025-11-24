@@ -9,6 +9,10 @@ const bookmarkRoutes = require("./routes/bookmark.routes");
 
 const app = express();
 
+// ⬇⬇ ADD THIS
+const passport = require("passport");
+require("./service/googleAuth.service");
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -18,6 +22,9 @@ app.use(
     credentials: true,
   })
 );
+
+// ⬇⬇ ADD THIS
+app.use(passport.initialize());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/translator", translatorRoutes);
@@ -29,5 +36,5 @@ app.use(express.static(path.join(__dirname1, "frontend", "dist")));
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname1, "frontend", "dist", "index.html"));
 });
- 
+
 module.exports = app;

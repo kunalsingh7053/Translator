@@ -1,22 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const authController = require("../controllers/auth.controller")
-const authMiddleware = require("../middleware/auth.middleware")
+const authController = require("../controllers/auth.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
+const passport = require("passport");
 
-router.post("/register",authController.register)
-router.post("/login",authController.login)
-router.post("/logout",authController.logout)
+// -------------------------------------------
+// 🔹 NORMAL AUTH ROUTES
+// -------------------------------------------
+router.post("/register", authController.register);
+router.post("/login", authController.login);
+router.post("/logout", authController.logout);
 
-router.get("/profile",authMiddleware.authUser,authController.getProfile)
-router.delete("/profile",authMiddleware.authUser,authController.deleteProfile)
+router.get("/profile", authMiddleware.authUser, authController.getProfile);
+router.delete("/profile", authMiddleware.authUser, authController.deleteProfile);
 router.patch(
   "/profile/update",
   authMiddleware.authUser,
-  upload.single("image"), // Multer middleware to handle profile image
+  upload.single("image"),
   authController.updateProfile
 );
 
+// -------------------------------------------
+// 🔹 GOOGLE LOGIN ROUTES
+// -------------------------------------------
 
-module.exports = router;    
+// 🔥 Step 1 — Redirect user to Google login
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// 🔥 Step 2 — Google redirects user back to backend
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  authController.googleAuthSuccess
+);
+
+module.exports = router;
