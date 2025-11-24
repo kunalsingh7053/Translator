@@ -15,6 +15,7 @@ router.post("/logout", authController.logout);
 
 router.get("/profile", authMiddleware.authUser, authController.getProfile);
 router.delete("/profile", authMiddleware.authUser, authController.deleteProfile);
+
 router.patch(
   "/profile/update",
   authMiddleware.authUser,
@@ -26,16 +27,22 @@ router.patch(
 // 🔹 GOOGLE LOGIN ROUTES
 // -------------------------------------------
 
-// 🔥 Step 1 — Redirect user to Google login
+// 🔥 Step 1 — Start Google OAuth (no session)
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,     // ⬅ REQUIRED
+  })
 );
 
-// 🔥 Step 2 — Google redirects user back to backend
+// 🔥 Step 2 — Google redirect callback (no session)
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false,     // ⬅ REQUIRED
+  }),
   authController.googleAuthSuccess
 );
 
