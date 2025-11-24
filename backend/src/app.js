@@ -30,11 +30,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/translator", translatorRoutes);
 app.use("/api", bookmarkRoutes);
 
-const __dirname1 = path.resolve();
-app.use(express.static(path.join(__dirname1, "frontend", "dist")));
 
+const __dirname1 = path.resolve();
+app.use(express.static(path.join(__dirname1, "../frontend/dist")));
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname1, "frontend", "dist", "index.html"));
+  res.sendFile(path.join(__dirname1, "../frontend/dist/index.html"));
 });
+
 
 module.exports = app;
