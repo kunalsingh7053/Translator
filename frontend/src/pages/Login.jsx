@@ -10,16 +10,17 @@ const Login = () => {
   const navigate = useNavigate();
 
   // 📌 Handle Google redirect URL → login automatically
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
 
-    if (token) {
-      localStorage.setItem("token", token);
-      toast.success("Logged in successfully!");
-      navigate("/");
-    }
-  }, []);
+  if (token) {
+    localStorage.setItem("token", token);
+    toast.success("Login successful!");
+    navigate("/");
+  }
+}, []);
+
 
   const {
     register,
