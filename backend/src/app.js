@@ -33,9 +33,11 @@ app.use("/api", bookmarkRoutes);
 
 const __dirname1 = path.resolve();
 app.use(express.static(path.join(__dirname1, "../frontend/dist")));
-app.get("/*", (req, res) => {
+// Serve React only for non-API routes
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname1, "../frontend/dist/index.html"));
 });
+
 
 
 module.exports = app;
