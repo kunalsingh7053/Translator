@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { loginUser } from "../features/actions/userAction"; // 👈 create this if not made yet
+import { loginUser } from "../features/actions/userAction";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // 📌 Handle Google redirect URL → login automatically
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+      toast.success("Logged in successfully!");
+      navigate("/");
+    }
+  }, []);
+
   const {
-    register, 
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: "onTouched" });
@@ -20,16 +32,17 @@ const Login = () => {
 
     if (result.success) {
       toast.success("Login successful!");
-      navigate("/"); // redirect to your home/dashboard
+      navigate("/");
     } else {
-      toast.error(`Login failed: ${result.message}`);
+      toast.error(result.message);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        {/* Left side */}
+        
+        {/* Left section */}
         <div className="p-10 bg-gradient-to-b from-indigo-50 to-sky-50 flex flex-col justify-center">
           <div className="text-indigo-700 font-extrabold text-2xl">Translator</div>
           <h2 className="mt-4 text-3xl font-semibold text-slate-900">Welcome back</h2>
@@ -37,31 +50,35 @@ const Login = () => {
             Log in to access your translations, saved history, and personalized preferences.
           </p>
           <div className="mt-6 h-48 rounded-lg overflow-hidden">
-            <img src="https://i.pinimg.com/1200x/58/ec/72/58ec72a7e4a38b1c677e2aa37f2ceaeb.jpg" alt="login" className="w-full h-full object-cover" />
+            <img
+              src="https://i.pinimg.com/1200x/58/ec/72/58ec72a7e4a38b1c677e2aa37f2ceaeb.jpg"
+              alt="login"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        {/* Right side form */}
+        {/* Right section — login form */}
         <div className="p-8 md:p-10">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-slate-700">Email address</label>
+              <label className="block text-sm font-medium text-slate-700">Email</label>
               <input
                 {...register("email", {
                   required: "Email is required",
-                 pattern: {
-  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // ✅ single backslash
-  message: "Enter a valid email address",
-},
-
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
                 })}
                 type="email"
                 className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 focus:ring-2 focus:ring-sky-200 focus:outline-none"
                 placeholder="you@example.com"
               />
               {errors.email && (
-                <div className="text-sm text-red-500 mt-1">{errors.email.message}</div>
+                <span className="text-sm text-red-500">{errors.email.message}</span>
               )}
             </div>
 
@@ -75,32 +92,43 @@ const Login = () => {
                 placeholder="Enter your password"
               />
               {errors.password && (
-                <div className="text-sm text-red-500 mt-1">{errors.password.message}</div>
+                <span className="text-sm text-red-500">{errors.password.message}</span>
               )}
             </div>
 
-            {/* Submit */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <button
-                type="submit"
-                className="w-full md:w-auto inline-flex items-center justify-center rounded-lg bg-indigo-600 text-white px-5 py-2 font-semibold shadow"
-              >
-                Sign in
-              </button>
-              <div className="text-sm text-slate-500">
-                Don’t have an account?{" "}
-                <Link to="/register" className="text-indigo-600 underline">
-                  Create one
-                </Link>
-              </div>
-            </div>
+            {/* Sign in button */}
+            <button
+              type="submit"
+              className="w-full inline-flex items-center justify-center rounded-lg bg-indigo-600 text-white px-5 py-2 font-semibold shadow"
+            >
+              Sign in
+            </button>
 
-            {/* Forgot Password link (optional) */}
-            <div className="text-right mt-2">
-              <Link to="#" className="text-sm text-indigo-600 underline">
-                Forgot your password?
+            {/* Google login */}
+            <button
+              type="button"
+              onClick={() =>
+                (window.location.href =
+                  "https://translator-lo1e.onrender.com/api/auth/google")
+              }
+              className="w-full mt-4 flex items-center justify-center gap-2 rounded-lg border px-3 py-2 font-semibold bg-white shadow hover:bg-slate-50"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                alt="google"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+
+            {/* Register link */}
+            <div className="text-sm text-center text-slate-500 mt-4">
+              Don’t have an account?{" "}
+              <Link to="/register" className="text-indigo-600 underline">
+                Create one
               </Link>
             </div>
+
           </form>
         </div>
       </div>
