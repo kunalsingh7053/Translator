@@ -46,6 +46,37 @@ async function register(req,res){
         }
     })
 } 
+// ⬇ ADD FOR GOOGLE LOGIN
+async function googleAuthSuccess(req, res) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Google authentication failed" });
+    }
+
+    const token = jwt.sign(
+      { id: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Set cookie (same as normal login)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    // Redirect to frontend with token
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/login?token=${token}`
+    );
+
+  } catch (err) {
+    console.error("Google Auth error:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 async function login(req,res){
     const {email,password} = req.body;
     const user = await userModel.findOne({
@@ -249,5 +280,6 @@ module.exports = {
     logout,
     getProfile,
     deleteProfile,
-    updateProfile
+    updateProfile,
+    googleAuthSuccess
 }
