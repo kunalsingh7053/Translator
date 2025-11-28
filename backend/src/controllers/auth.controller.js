@@ -50,7 +50,7 @@ async function register(req,res){
 async function googleAuthSuccess(req, res) {
   try {
     console.log("🔹 Google callback executed");
-    console.log("🔹 User from Google:", req.user);
+console.log("🔹 User from Google:", req.user);
 
     if (!req.user) {
       return res.status(401).json({ message: "Google authentication failed" });
@@ -62,10 +62,14 @@ async function googleAuthSuccess(req, res) {
       { expiresIn: "7d" }
     );
 
-    // ⛔ DO NOT set cookie here
-    // res.cookie( ... )  ← remove this part
+    // Set cookie (same as normal login)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
-    // redirect to frontend with token
+    // Redirect to frontend with token
     return res.redirect(
       `${process.env.FRONTEND_URL}/login?token=${token}`
     );
