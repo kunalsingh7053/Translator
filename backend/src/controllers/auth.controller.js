@@ -50,35 +50,36 @@ async function register(req,res){
 async function googleAuthSuccess(req, res) {
   try {
     console.log("🔹 Google callback executed");
-console.log("🔹 User from Google:", req.user);
+    console.log("🔹 User from Google:", req.user);
 
-    if (!req.user) {
-      return res.status(401).json({ message: "Google authentication failed" });
+    // If Passport didn't attach user
+    if (!req.user || !req.user._id) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google_failed`);
     }
 
+    // Create JWT
     const token = jwt.sign(
       { id: req.user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // Set cookie (same as normal login)
+    // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
     });
 
-    // Redirect to frontend with token
-    return res.redirect(
-      `${process.env.FRONTEND_URL}/login?token=${token}`
-    );
+    // Instead of /login, redirect to dashboard/home
+    return res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
 
   } catch (err) {
     console.error("Google Auth error:", err);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
   }
 }
+
 
 async function login(req,res){
     const {email,password} = req.body;
