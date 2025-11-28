@@ -49,36 +49,31 @@ async function register(req,res){
 // ⬇ ADD FOR GOOGLE LOGIN
 async function googleAuthSuccess(req, res) {
   try {
-    console.log("🔹 Google callback executed");
-    console.log("🔹 User from Google:", req.user);
-
-    // If Passport didn't attach user
     if (!req.user || !req.user._id) {
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google_failed`);
+      return res.redirect("https://fasttranslator.netlify.app/login?error=google_failed");
     }
 
-    // Create JWT
     const token = jwt.sign(
       { id: req.user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
     });
 
-    // Instead of /login, redirect to dashboard/home
-    return res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+    const frontendURL = process.env.FRONTEND_URL || "https://fasttranslator.netlify.app";
 
+    return res.redirect(`${frontendURL}?token=${token}`);
   } catch (err) {
     console.error("Google Auth error:", err);
-    return res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
+    return res.redirect("https://fasttranslator.netlify.app/login?error=server_error");
   }
 }
+
 
 
 async function login(req,res){
