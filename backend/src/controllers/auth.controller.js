@@ -1,3 +1,4 @@
+const sendEmail = require('../service/email.service');
 const userModel = require("../models/user.model")
 const bookmarkModel = require("../models/bookmark.model")
 const  msgModel = require("../models/msg.model")
@@ -35,6 +36,13 @@ async function register(req,res){
 });
 
 
+// Example usage
+sendEmail(
+  `${user.email}`,
+  `Welcome to Fast Translator! ${user.fullName.firstName}`,
+  'Thank you for registering with Fast Translator. We are excited to have you on board!',
+  '<h1>Welcome to Fast Translator!</h1><p>Thank you for registering with Fast Translator. We are excited to have you on board!</p>'
+);
 
     res.status(201).json({
         message:"User registered successfully",
