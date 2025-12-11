@@ -23,7 +23,7 @@ passport.use(
           user = await User.create({
             email,
             fullName: { 
-              firstName,
+              firstName, 
               lastName,
             },
             googleId: profile.id,

@@ -57,8 +57,8 @@ sendEmail(
 // ⬇ ADD FOR GOOGLE LOGIN
 async function googleAuthSuccess(req, res) {
   try {
-    if (!req.user || !req.user._id) {
-      return res.redirect("https://fasttranslator.netlify.app/login?error=google_failed");
+    if (!req.user) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google_failed`);
     }
 
     const token = jwt.sign(
@@ -67,18 +67,12 @@ async function googleAuthSuccess(req, res) {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
+    // redirect with token
+    return res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
 
-    const frontendURL = process.env.FRONTEND_URL || "https://fasttranslator.netlify.app";
-
-    return res.redirect(`${frontendURL}?token=${token}`);
   } catch (err) {
     console.error("Google Auth error:", err);
-    return res.redirect("https://fasttranslator.netlify.app/login?error=server_error");
+    return res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
   }
 }
 
