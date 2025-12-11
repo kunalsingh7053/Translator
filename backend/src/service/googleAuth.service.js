@@ -10,6 +10,10 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Defensive: handle missing emails
+        if (!profile.emails || profile.emails.length === 0) {
+          return done(new Error('No email provided by Google'), null);
+        }
         const email = profile.emails[0].value;
 
         let user = await User.findOne({ email });
@@ -23,17 +27,18 @@ passport.use(
           user = await User.create({
             email,
             fullName: { 
-              firstName, 
+              firstName,
               lastName,
             },
             googleId: profile.id,
-            avatar: profile.photos[0].value,
+            avatar: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null,
             language: "en", // default language for Google signup
           });
         }
 
         return done(null, user);
       } catch (error) {
+        console.error('Google OAuth error:', error.message);
         return done(error, null);
       }
     }

@@ -2,6 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
+const session = require("express-session");
 
 const authRoutes = require("./routes/auth.routes");
 const translatorRoutes = require("./routes/chat.routes");
@@ -22,18 +23,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: true, sameSite: "none" }
-  })
-);
 
-app.use(passport.initialize());
-app.use(passport.session());
-// ⬇⬇ ADD THIS
 app.use(passport.initialize());
 
 app.use("/api/auth", authRoutes);
