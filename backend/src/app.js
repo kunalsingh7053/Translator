@@ -46,12 +46,17 @@ app.get('/api/auth/google',
 app.get('/api/auth/google/callback',
   passport.authenticate('google', { session: false }),
   (req, res) => {
-    // Generate a JWT for the authenticated user
-    const token = jwt.sign({ id: req.user.id, displayName: req.user.displayName }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    // Send the token to the client
-    res.json({ token });
+    const token = jwt.sign(
+      { id: req.user.id, displayName: req.user.displayName },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // Redirect token to frontend
+    res.redirect(`https://fasttranslator.netlify.app/auth/success?token=${token}`);
   }
 );
+
 //using routes
 app.use("/api/auth",authRoutes)
 app.use("/api/translator",translatorRoutes)
