@@ -29,7 +29,7 @@ app.use(passport.initialize());
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback',
+  callbackURL: '/api/auth/google/callback',
 }, (accessToken, refreshToken, profile, done) => {
   // Here, you would typically find or create a user in your database
   // For this example, we'll just return the profile
@@ -37,7 +37,7 @@ passport.use(new GoogleStrategy({
 }));
 
 // Route to initiate Google OAuth flow
-app.get('/auth/google',
+app.get('/api/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
