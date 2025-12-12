@@ -42,7 +42,7 @@ app.get('/auth/google',
 );
 
 // Callback route that Google will redirect to after authentication
-app.get('/auth/google/callback',
+app.get('/api/auth/google/callback',
   passport.authenticate('google', { session: false }),
   (req, res) => {
     // Generate a JWT for the authenticated user
