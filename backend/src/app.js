@@ -1,43 +1,55 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const path = require("path");
-const session = require("express-session");
-
-const authRoutes = require("./routes/auth.routes");
-const translatorRoutes = require("./routes/chat.routes");
-const bookmarkRoutes = require("./routes/bookmark.routes");
-
 const app = express();
+const cookieparser = require("cookie-parser")
+const cors = require("cors")
+const authRoutes = require("./routes/auth.routes")
+const translatorRoutes = require("./routes/chat.routes"); // ✅ correct
+const bookmarkRoutes = require("./routes/bookmark.routes")
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
-// ⬇⬇ ADD THIS
-const passport = require("passport");
-require("./service/googleAuth.service");
+//using middlewares
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: ["https://fasttranslator.netlify.app","http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+app.use(express.json())
+// Ye middleware req.cookies ko populate karega 
+app.use(cookieparser());
+app.use(cors({
+    origin: "http://localhost:5173",
     credentials: true,
-  })
-);
+}))
+
 
 app.use(passport.initialize());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/translator", translatorRoutes);
-app.use("/api", bookmarkRoutes);
+// Configure Passport to use Google OAuth 2.0 strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/auth/google/callback',
+}, (accessToken, refreshToken, profile, done) => {
+  // Here, you would typically find or create a user in your database
+  // For this example, we'll just return the profile
+  return done(null, profile);
+}));
 
+// Route to initiate Google OAuth flow
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 
-const __dirname1 = path.resolve();
-app.use(express.static(path.join(__dirname1, "../frontend/dist")));
-// Serve React only for non-API routes
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname1, "../frontend/dist/index.html"));
-});
-
+// Callback route that Google will redirect to after authentication
+app.get('/auth/google/callback',
+  passport.authenticate('google', { session: false }),
+  (req, res) => {
+    // Generate a JWT for the authenticated user
+    const token = jwt.sign({ id: req.user.id, displayName: req.user.displayName }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Send the token to the client
+    res.json({ token });
+  }
+);
+//using routes
+app.use("/api/auth",authRoutes)
+app.use("/api/translator",translatorRoutes)
+app.use("/api",bookmarkRoutes)
 
 
 module.exports = app;
