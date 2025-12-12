@@ -15,9 +15,12 @@ app.use(express.json())
 // Ye middleware req.cookies ko populate karega 
 app.use(cookieparser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: [
+        "http://localhost:5173",
+        "https://fasttranslator.netlify.app"
+    ],
     credentials: true,
-}))
+}));
 
 
 app.use(passport.initialize());
