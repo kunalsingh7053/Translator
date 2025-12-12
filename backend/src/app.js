@@ -5,6 +5,8 @@ const cors = require("cors")
 const authRoutes = require("./routes/auth.routes")
 const translatorRoutes = require("./routes/chat.routes"); // ✅ correct
 const bookmarkRoutes = require("./routes/bookmark.routes")
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
 //using middlewares
