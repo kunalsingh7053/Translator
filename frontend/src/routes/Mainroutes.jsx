@@ -7,6 +7,7 @@ import About from "../pages/About";
 import Bookmark from "../pages/Bookmark";
 import History from "../pages/History";
 import Profile from "../pages/Profile";
+import AuthSuccess from "../pages/AuthSuccess";
 import PageNotFound from "../pages/PageNotFound";
 import ProtectedRoute from "../routes/ProtectedRoute";
 
@@ -16,6 +17,7 @@ const Mainroutes = () => {
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/success" element={<AuthSuccess />} />
 
         {/* 🔒 Protected Routes */}
 
