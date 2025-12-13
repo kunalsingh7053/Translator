@@ -14,6 +14,8 @@ passport.use(
         const email = profile.emails[0].value;
 
         let user = await User.findOne({ email });
+        let isNewUser = false;
+
 
         if (!user) {
           const nameParts = profile.displayName.split(" ");
@@ -31,9 +33,12 @@ passport.use(
             avatar: profile.photos?.[0]?.value || "",
             language: "en",
           });
+                    isNewUser = true; // 👈 IMPORTANT
+
         }
 
-        return done(null, user);
+                return done(null, { user, isNewUser });
+
       } catch (err) {
         return done(err, null);
       }

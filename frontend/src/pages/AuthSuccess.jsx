@@ -5,20 +5,27 @@ import { toast } from "react-toastify";
 const AuthSuccess = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Google login successful, token is in cookie
-    // Just show success message and redirect to home
-    toast.success("Logged in with Google!");
-    
-    // Small delay to show the message, then redirect
-    const timer = setTimeout(() => {
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const isNewUser = params.get("new") === "true";
+
+  axios
+    .get("https://translator-lo1e.onrender.com/api/auth/profile", {
+      withCredentials: true,
+    })
+    .then(() => {
+      if (isNewUser) {
+        toast.success("Registered successfully with Google 🎉");
+      } else {
+        toast.success("Login successful 👍");
+      }
       navigate("/");
-    }, 1000);
+    })
+    .catch(() => navigate("/login"));
+}, []);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
 
-  return <p className="text-center mt-10">Logging you in...</p>;
+  return <p className="text-center mt-10">Please wait while we redirect you...</p>;
 };
 
 export default AuthSuccess;

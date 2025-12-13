@@ -53,7 +53,9 @@ router.get(
       sameSite: "none",
     });
 
-    res.redirect(`${process.env.FRONTEND_URL}/auth/success`);
+  res.redirect(
+      `${process.env.FRONTEND_URL}/auth/success?new=${isNewUser}`
+    );
   }
 );
 module.exports = router;
