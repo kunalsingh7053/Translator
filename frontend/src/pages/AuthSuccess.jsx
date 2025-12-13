@@ -31,7 +31,8 @@ const AuthSuccess = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <p>Logging you in...</p>
+      <p>Please wait while we redirect you...</p>
+      <p>This page will automatically redirect in a few seconds</p>
     </div>
   );
 };
