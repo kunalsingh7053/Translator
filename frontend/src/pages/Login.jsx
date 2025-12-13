@@ -3,23 +3,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { loginUser } from "../features/actions/userAction";
+import { loginUser, fetchUserProfile } from "../features/actions/userAction";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 📌 Handle Google redirect URL → login automatically
+  // 📌 Handle Google redirect → token is in cookie, fetch user & go to home
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const error = params.get("error");
 
-    if (token) {
-      localStorage.setItem("token", token);
-      toast.success("Logged in successfully!");
-      navigate("/");
+    if (error) {
+      toast.error(`Google login failed: ${error}`);
+      return;
     }
-  }, []);
+
+    // Check if user was just redirected from Google (cookie was set by backend)
+    // Fetch the user profile to confirm logged in
+    const checkAndRedirect = async () => {
+      try {
+        const result = await dispatch(fetchUserProfile());
+        if (result?.id) {
+          toast.success("Logged in successfully!");
+          navigate("/");
+        }
+      } catch (err) {
+        // Not logged in, stay on login page
+      }
+    };
+
+    checkAndRedirect();
+  }, [dispatch, navigate]);
 
   const {
     register,

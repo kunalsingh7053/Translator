@@ -67,11 +67,22 @@ async function googleAuthSuccess(req, res) {
       { expiresIn: "7d" }
     );
 
-    // redirect with token
-    return res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+    // Set token cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    // Redirect to home page (token is in cookie)
+    return res.redirect(`${process.env.FRONTEND_URL}`);
 
   } catch (err) {
-    console.error("Google Auth error:", err);
+    console.error("Google Auth error:", err.stack || err);
+    // In development return error details to help debugging; in production keep generic
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("Error details:", err.message);
+    }
     return res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
   }
 }
@@ -84,7 +95,7 @@ async function login(req,res){
         email
     })
     if(!user){
-        return res.status(400).json({message:"Invalid email Please register first"})
+        return res.status(400).json({message:"Invalid email Pleasee register first"})
     }
     const isPasswordValid = await bcrypt.compare(password,user.password)
     if(!isPasswordValid){
