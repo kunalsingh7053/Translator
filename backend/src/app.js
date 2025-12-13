@@ -53,7 +53,7 @@ app.get('/api/auth/google/callback',
     );
 
     // Redirect token to frontend
-    res.redirect(`https://fasttranslator.netlify.app/auth/success?token=${token}`);
+    res.redirect(`https://fasttranslator.netlify.app/login?token=${token}`);
   }
 );
 
