@@ -1,6 +1,7 @@
-const passport = require('passport');
-const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+const passport = require("passport");
+const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 const User = require("../models/user.model");
+
 passport.use(
   new GoogleStrategy(
     {
@@ -15,28 +16,29 @@ passport.use(
         let user = await User.findOne({ email });
 
         if (!user) {
-          // first time Google login → create user
-          const fullName = profile.displayName.split(" ");
-          const firstName = fullName[0];
-          const lastName = fullName.length > 1 ? fullName.slice(1).join(" ") : "";
+          const nameParts = profile.displayName.split(" ");
+          const firstName = nameParts[0];
+          const lastName =
+            nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
           user = await User.create({
             email,
-            fullName: { 
-              firstName, 
+            fullName: {
+              firstName,
               lastName,
             },
             googleId: profile.id,
-            avatar: profile.photos[0].value,
-            language: "en", // default language for Google signup
+            avatar: profile.photos?.[0]?.value || "",
+            language: "en",
           });
         }
 
         return done(null, user);
-      } catch (error) {
-        return done(error, null);
+      } catch (err) {
+        return done(err, null);
       }
     }
   )
 );
 
+module.exports = passport;

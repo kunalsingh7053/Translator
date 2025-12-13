@@ -37,25 +37,8 @@ callbackURL: 'https://translator-lo1e.onrender.com/api/auth/google/callback'
   return done(null, profile);
 }));
 
-// Route to initiate Google OAuth flow
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
 
-// Callback route that Google will redirect to after authentication
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { session: false }),
-  (req, res) => {
-    const token = jwt.sign(
-      { id: req.user.id, displayName: req.user.displayName },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
 
-    // Redirect token to frontend
-    res.redirect(`https://fasttranslator.netlify.app/login?token=${token}`);
-  }
-);
 
 //using routes
 app.use("/api/auth",authRoutes)

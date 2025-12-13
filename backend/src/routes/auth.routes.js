@@ -5,6 +5,7 @@ const authMiddleware = require("../middleware/auth.middleware");
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 // -------------------------------------------
 // 🔹 NORMAL AUTH ROUTES
@@ -27,23 +28,32 @@ router.patch(
 // 🔹 GOOGLE LOGIN ROUTES
 // -------------------------------------------
 
-// 🔥 Step 1 — Start Google OAuth (no session)
+// 🔹 Google Login Start
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    session: false,     // ⬅ REQUIRED
   })
 );
 
-// 🔥 Step 2 — Google redirect callback (no session)
+// 🔹 Google Callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-  }),
-  authController.googleAuthSuccess
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.redirect(`${process.env.FRONTEND_URL}/auth/success`);
+  }
 );
-
-
 module.exports = router;

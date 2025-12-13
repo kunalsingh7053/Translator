@@ -118,7 +118,7 @@ const Login = () => {
                 alt="google"
                 className="w-5 h-5"
               />
-              Continue withs Google
+              Continue with Google
             </button>
 
             {/* Register link */}
