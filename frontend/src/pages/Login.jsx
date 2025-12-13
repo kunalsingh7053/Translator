@@ -107,17 +107,18 @@ const Login = () => {
             {/* Google login */}
             <button
               type="button"
-              onClick={() =>
-                (window.location.href =
-                  "https://translator-lo1e.onrender.com/api/auth/google")
-              }
+              onClick={() => {
+                const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://translator-lo1e.onrender.com";
+                window.location.href = `${backendUrl}/api/auth/google`;
+              }}
               className="w-full mt-4 flex items-center justify-center gap-2 rounded-lg border px-3 py-2 font-semibold bg-white shadow hover:bg-slate-50"
             >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                alt="google"
-                className="w-5 h-5"
-              />
+             <img
+  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+  alt="google"
+  className="w-5 h-5"
+/>
+
               Continue with Google
             </button>
 

@@ -6,8 +6,7 @@ const authRoutes = require("./routes/auth.routes")
 const translatorRoutes = require("./routes/chat.routes"); // ✅ correct
 const bookmarkRoutes = require("./routes/bookmark.routes")
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+require('./service/googleAuth.service'); // ✅ Load the Google strategy from here
 
 //using middlewares
 
@@ -22,23 +21,7 @@ app.use(cors({
     credentials: true,
 }));
 
-
 app.use(passport.initialize());
-
-// Configure Passport to use Google OAuth 2.0 strategy
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-callbackURL: 'https://translator-lo1e.onrender.com/api/auth/google/callback'
-
-}, (accessToken, refreshToken, profile, done) => {
-  // Here, you would typically find or create a user in your database
-  // For this example, we'll just return the profile
-  return done(null, profile);
-}));
-
-
-
 
 //using routes
 app.use("/api/auth",authRoutes)
